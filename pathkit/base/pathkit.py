@@ -1,8 +1,6 @@
 from pathlib import Path
 
-from flatbuffers import encode
-
-from pathkit.file_reader import FileReader
+from pathkit.process.reader import XMLReader
 
 
 class PathList(list):
@@ -27,15 +25,17 @@ class PathKit:
 
     @staticmethod
     def get_keyword_with_xml_label(src_path: str, key_word: str, is_recursion: bool = False) -> PathList:
+        """ 关键词查找对应的xml文件 """
         path = Path(src_path)
         iterator = path.rglob("*.xml") if is_recursion else path.glob("*.xml")
         target_path = []
         for xml_path in iterator:
-            if key_word in FileReader(xml_path).label_name:
+            if key_word in XMLReader(xml_path).label_name:
                 target_path.append(xml_path)
         return PathList(list(target_path))
 
-    @staticmethod
-    def save_txt(data: list[str], save_path: str) -> None:
-        with open(save_path, "w", encoding="utf-8") as f:
-            f.writelines(f"\"{line}\"," + "\n" for line in data)
+pathkit = PathKit()
+print(pathkit.get_keyword_with_xml_label(
+    "/mnt/8T/TE/datasets/实车/download-2026-03-17_16-22-18/teds/转向架/车轮/PS_20260306_TEDS_车轮注油堵脱落_基于cat_CRH1A_23处/CHANGSHASUOHKJ_20250412232443_6_CRH1A-1101_1/xml",
+    "dibuzxj__<lundui_lunpan>-<zyk>__diushi"
+))
