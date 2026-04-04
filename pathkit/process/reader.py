@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Union
+
 from pathkit.process.base.abc import BaseReader
 
 
@@ -36,4 +37,3 @@ class XMLReader(BaseReader):
     def label_name(self) -> list[Union[str, None]]:
         label_name = [obj.find("name").text for obj in self.__root.findall("object")]
         return label_name
-

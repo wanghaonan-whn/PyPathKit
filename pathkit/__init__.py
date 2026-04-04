@@ -1,4 +1,3 @@
+from pathkit.base import PathEntry, PathList, PathUtils
 
-from pathkit.base import PurePath, PathList, PathUtils
-
-__all__ = ["PurePath", "PathList", "PathUtils"]
+__all__ = ["PathEntry", "PathList", "PathUtils"]
