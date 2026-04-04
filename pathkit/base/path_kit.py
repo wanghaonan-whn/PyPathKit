@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 
 from pathkit.process.reader import XMLReader
 
@@ -14,8 +15,24 @@ class PathList(list):
 
 
 class PathKit:
+
+    def get_file_path_with_channel(self, src_path: str, channel: List[int], suffix: str) -> PathList:
+        file_paths = self.get_file_path_with_suffix(src_path, suffix=suffix, is_recursion=True)
+        filtered_paths_with_channel = [
+            file_path for file_path in file_paths if int(file_path.name.split('--')[0][-1]) in channel
+        ]
+        return PathList(filtered_paths_with_channel)
+
     @staticmethod
-    def get_file_with_suffix(src_path: str, suffix: str, is_recursion: bool = False) -> PathList:
+    def parse_file_with_suffix(src_path: str, is_recursion: bool = False) -> PathList:
+        """ 获取路径下所有文件后缀 """
+        path = Path(src_path)
+        file_paths = path.rglob("*") if is_recursion else path.glob("*")
+        suffix = set([file.suffix.lstrip(".") for file in file_paths])
+        return PathList(list(suffix))
+
+    @staticmethod
+    def get_file_path_with_suffix(src_path: str, suffix: str, is_recursion: bool = False) -> PathList:
         """ 获取路径下匹配后缀的文件列表 """
         suffix = suffix.lstrip(".")
         path = Path(src_path)
@@ -34,8 +51,11 @@ class PathKit:
                 target_path.append(xml_path)
         return PathList(list(target_path))
 
+
 pathkit = PathKit()
-print(pathkit.get_keyword_with_xml_label(
-    "/mnt/8T/TE/datasets/实车/download-2026-03-17_16-22-18/teds/转向架/车轮/PS_20260306_TEDS_车轮注油堵脱落_基于cat_CRH1A_23处/CHANGSHASUOHKJ_20250412232443_6_CRH1A-1101_1/xml",
-    "dibuzxj__<lundui_lunpan>-<zyk>__diushi"
-))
+
+pathkit.get_file_path_with_channel(
+    src_path="/mnt/commontf/tvdata/TV/3-普客过车梳理/转向架接口切图",
+    channel=[1, 5],
+    suffix="png"
+)
