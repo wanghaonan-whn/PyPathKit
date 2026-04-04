@@ -15,7 +15,74 @@ class PathList(list):
 
 
 class PathKit:
+    """ 路径语义处理 """
 
+    def join(self):
+        """ 路径拼接 """
+        pass
+
+    def normalize(self):
+        """ 规范化分隔符 """
+        pass
+
+    def resolve(self):
+        """ 基路径 -> 绝对路径"""
+        pass
+
+    def relative(self):
+        """ 相对路径 """
+        pass
+
+    def basename(self):
+        """ 文件名 """
+        pass
+
+    def dirname(self):
+        """ 父路径 """
+        pass
+
+    def stem(self):
+        """ 去扩展名文件名 """
+        pass
+
+    def suffix(self):
+        """ 扩展名 """
+        pass
+
+    def suffixes(self):
+        """ all 扩展名 """
+        pass
+
+    def with_suffix(self, suffix: str):
+        """ 修改扩展名 """
+        pass
+
+    def with_name(self, name: str):
+        """ 修改文件名 """
+        pass
+
+    def is_absolute(self):
+        """ 绝对路径 """
+        pass
+
+    def is_relative(self):
+        """ 相对路径 """
+        pass
+
+    def common_path(self):
+        """ 共同父路径 """
+        pass
+
+    def matches(self):
+        """ glob匹配 """
+        pass
+
+    def parts(self):
+        """  """
+        pass
+
+
+class PathUtils:
     def get_file_path_with_channel(self, src_path: str, channel: List[int], suffix: str) -> PathList:
         file_paths = self.get_file_path_with_suffix(src_path, suffix=suffix, is_recursion=True)
         filtered_paths_with_channel = [
@@ -50,4 +117,3 @@ class PathKit:
             if key_word in XMLReader(xml_path).label_name:
                 target_path.append(xml_path)
         return PathList(list(target_path))
-
