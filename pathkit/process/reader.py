@@ -37,8 +37,3 @@ class XMLReader(BaseReader):
         label_name = [obj.find("name").text for obj in self.__root.findall("object")]
         return label_name
 
-
-xmlreader = XMLReader(
-    "/mnt/8T/TE/datasets/实车/download-2026-03-17_16-22-18/teds/转向架/车轮/PS_20260306_TEDS_车轮注油堵脱落_基于cat_CRH1A_23处/CHANGSHASUOHKJ_20250412232443_6_CRH1A-1101_1/xml/1_8.xml")
-xml_tree = xmlreader.get_root()
-

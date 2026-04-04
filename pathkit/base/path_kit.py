@@ -51,11 +51,3 @@ class PathKit:
                 target_path.append(xml_path)
         return PathList(list(target_path))
 
-
-pathkit = PathKit()
-
-pathkit.get_file_path_with_channel(
-    src_path="/mnt/commontf/tvdata/TV/3-普客过车梳理/转向架接口切图",
-    channel=[1, 5],
-    suffix="png"
-)
