@@ -26,7 +26,7 @@ class PathKit:
         pass
 
     def resolve(self):
-        """ 基路径 -> 绝对路径"""
+        """ 基路径 -> 绝对路径 """
         pass
 
     def relative(self):
