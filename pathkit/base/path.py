@@ -1,5 +1,6 @@
+import os
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 from pathkit.process.reader import XMLReader
 
@@ -14,72 +15,87 @@ class PathList(list):
         return [str(p) for p in self]
 
 
-class PathKit:
+class PurePath:
     """ 路径语义处理 """
 
-    def join(self):
+    def __init__(self, path: Union[str, Path]):
+        self.path = Path(path)
+
+    def __str__(self):
+        return str(self.path)
+
+    @classmethod
+    def join(cls, *args: Union[str, Path]) -> "PurePath":
         """ 路径拼接 """
-        pass
+        if not args:
+            raise ValueError("join() requires at least one path segment")
+        return cls(Path(*args))
 
-    def normalize(self):
+    def normalize(self) -> "PurePath":
         """ 规范化分隔符 """
-        pass
+        return PurePath(self.path)
 
-    def resolve(self):
+    def resolve(self) -> "PurePath":
         """ 基路径 -> 绝对路径 """
-        pass
+        return PurePath(self.path.resolve())
 
-    def relative(self):
+    def relative_other(self, other: Union[str, Path, "PurePath"]) -> "PurePath":
         """ 相对路径 """
-        pass
+        base = other.path if isinstance(other, PurePath) else Path(other)
+        return PurePath(self.path.relative_to(base))
 
-    def basename(self):
+    @property
+    def basename(self) -> str:
         """ 文件名 """
-        pass
+        return self.path.name
 
-    def dirname(self):
+    @property
+    def dirname(self) -> "PurePath":
         """ 父路径 """
-        pass
+        return PurePath(self.path.parent)
 
-    def stem(self):
+    @property
+    def stem(self) -> str:
         """ 去扩展名文件名 """
-        pass
+        return self.path.stem
 
-    def suffix(self):
+    @property
+    def suffix(self) -> str:
         """ 扩展名 """
-        pass
+        return self.path.suffix
 
-    def suffixes(self):
+    @property
+    def suffixes(self) -> List[str]:
         """ all 扩展名 """
-        pass
+        return self.path.suffixes
 
-    def with_suffix(self, suffix: str):
+    @property
+    def parts(self) -> tuple[str, ...]:
+        """ 分层级取路径名 """
+        return self.path.parts
+
+    def with_suffix(self, suffix: str) -> "PurePath":
         """ 修改扩展名 """
-        pass
+        return PurePath(self.path.with_suffix(suffix))
 
-    def with_name(self, name: str):
+    def with_name(self, name: str) -> "PurePath":
         """ 修改文件名 """
-        pass
+        return PurePath(self.path.with_name(name))
 
-    def is_absolute(self):
+    def is_absolute(self) -> bool:
         """ 绝对路径 """
-        pass
+        return self.path.is_absolute()
 
-    def is_relative(self):
-        """ 相对路径 """
-        pass
-
-    def common_path(self):
+    def common_path(self, *others: Union[str, Path, "PurePath"]) -> "PurePath":
         """ 共同父路径 """
-        pass
+        paths = [str(self.path)]
+        for other in others:
+            paths.append(str(other.path) if isinstance(other, PurePath) else str(Path(other)))
+        return PurePath(os.path.commonpath(paths))
 
-    def matches(self):
+    def matches(self, pattern: str) -> bool:
         """ glob匹配 """
-        pass
-
-    def parts(self):
-        """  """
-        pass
+        return self.path.match(pattern)
 
 
 class PathUtils:
@@ -117,3 +133,8 @@ class PathUtils:
             if key_word in XMLReader(xml_path).label_name:
                 target_path.append(xml_path)
         return PathList(list(target_path))
+
+
+if __name__ == "__main__":
+    file = PurePath.join(r"D:\Projects\PyPathKit\pathkit\base\*.txt").parts
+    print(file)
