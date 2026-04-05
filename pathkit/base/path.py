@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from typing import List, Union
+from collections import Counter
 
 
 class PathList(list):
@@ -11,6 +12,44 @@ class PathList(list):
 
     def to_str(self) -> list[str]:
         return [str(p) for p in self]
+    
+    def counter_suffixes(self) -> dict[str, int]:
+        counter = Counter()
+        for file in self:
+            path = file if isinstance(file, Path) else Path(file)
+            suffix = path.suffix.lstrip(".")
+            if suffix:
+                counter[suffix] += 1
+        return dict(counter)
+    
+    def suffix_list(self) -> list[str]:
+        return list(self.counter_suffixes().keys())
+
+    def filter_file(self) -> "PathList":
+        return PathList([item for item in self if (item if isinstance(item, Path) else Path(item)).is_file()])
+    
+    def filter_dir(self) -> "PathList":
+        return PathList([item for item in self if (item if isinstance(item, Path) else Path(item)).is_dir()])
+    
+    def filter_exists(self) -> "PathList":
+        return PathList([item for item in self if (item if isinstance(item, Path) else Path(item)).exists()])
+
+    def sort_by_name(self, reverse: bool = False) -> "PathList":
+        return PathList(sorted(self, key=lambda item: (item if isinstance(item, Path) else Path(item)).name, reverse=reverse))
+
+    def sort_by_mtime(self, reverse: bool = False) -> "PathList":
+        return PathList(sorted(self, key=lambda item: (item if isinstance(item, PathEntry) else PathEntry(item)).stat().st_mtime, reverse=reverse))
+    
+    def unique(self) -> "PathList":
+        normalized = []
+        seen = set()
+        for item in self:
+            path = item if isinstance(item, Path) else Path(item)
+            if path not in seen:
+                seen.add(path)
+                normalized.append(path)
+        return PathList(normalized)
+
 
 
 class PathEntry:
@@ -31,19 +70,31 @@ class PathEntry:
         if not args:
             raise ValueError("join() requires at least one path segment")
         return cls(Path(*args))
+    
+    def joinpath(self, *args: Union[str, Path]) -> "PathEntry":
+        """路径拼接"""
+        if not args:
+            raise ValueError("joinpath() requires at least one path segment")
+        return PathEntry(self.path.joinpath(*args))
+    
+    def child(self, *others: Union[str, Path, "PathEntry"]) -> "PathEntry":
+        return self.joinpath(*others)
 
     def normalize(self) -> "PathEntry":
         """规范化分隔符"""
         return PathEntry(os.path.normpath(str(self.path)))
 
-    def resolve(self) -> "PathEntry":
+    def absolute(self) -> "PathEntry":
         """基路径 -> 绝对路径"""
         return PathEntry(self.path.resolve())
 
     def relative_to(self, other: Union[str, Path, "PathEntry"]) -> "PathEntry":
         """相对路径"""
         base = other.path if isinstance(other, PathEntry) else Path(other)
-        return PathEntry(self.path.relative_to(base))
+        try:
+            return PathEntry(self.path.relative_to(base))
+        except ValueError as exc:
+            raise ValueError(f"{self.path} is not under base path {base}") from exc
 
     def relative_other(self, other: Union[str, Path, "PathEntry"]) -> "PathEntry":
         return self.relative_to(other)
@@ -77,6 +128,11 @@ class PathEntry:
     def parts(self) -> tuple[str, ...]:
         """ """
         return self.path.parts
+
+    @property
+    def parents(self) -> PathList:
+        """所有父路径"""
+        return PathList([PathEntry(parent) for parent in self.path.parents])
 
     def with_suffix(self, suffix: str) -> "PathEntry":
         """修改扩展名"""
@@ -114,3 +170,44 @@ class PathEntry:
 
     def is_symlink(self) -> bool:
         return self.path.is_symlink()
+
+    def stat(self) -> os.stat_result:
+        if not self.path.exists():
+            raise FileNotFoundError(f"Path does not exist: {self.path}")
+        return self.path.stat()
+
+    def as_posix(self) -> str:
+        return self.path.as_posix()
+
+    def as_windows(self) -> str:
+        return self.path.as_windows()
+
+    def as_uri(self) -> str:
+        return self.path.as_uri()
+
+    def expanduser(self) -> "PathEntry":
+        return PathEntry(self.path.expanduser())
+
+    def samefile(self, other: Union[str, Path, "PathEntry"]) -> bool:
+        other_path = other.path if isinstance(other, PathEntry) else Path(other)
+        if not self.path.exists():
+            raise FileNotFoundError(f"Path does not exist: {self.path}")
+        if not other_path.exists():
+            raise FileNotFoundError(f"Path does not exist: {other_path}")
+        return self.path.samefile(other_path)
+
+    @property
+    def drive(self) -> str:
+        """Windows 驱动器"""
+        return self.path.drive
+
+    @property
+    def anchor(self) -> str:
+        """路径锚点"""
+        return self.path.anchor
+    
+    
+
+
+pathentry = PathEntry(r"D:\Projects\PyPathKit\pathkit")
+print(pathentry)

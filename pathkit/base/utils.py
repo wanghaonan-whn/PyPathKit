@@ -1,24 +1,126 @@
 from pathlib import Path
+from typing import Iterable
 
 from pathkit.base.path import PathList
 
 
 class PathUtils:
-    """Generic helpers for path scanning and suffix-based filtering."""
+    """路径扫描和基于后缀的过滤"""
 
     @staticmethod
-    def parse_file_with_suffix(src_path: str, is_recursion: bool = False) -> PathList:
-        """ 获取路径下所有文件后缀 """
+    def _ensure_src_path_exists(src_path: str) -> Path:
         path = Path(src_path)
-        file_paths = path.rglob("*") if is_recursion else path.glob("*")
+        if not path.exists():
+            raise FileNotFoundError(f"Path does not exist: {path}")
+        return path
+
+    @staticmethod
+    def _collect_paths(iterator: Iterable[Path], on_permission_error: str = "skip") -> PathList:
+        try:
+            return PathList(list(iterator))
+        except PermissionError:
+            if on_permission_error == "skip":
+                return PathList([])
+            raise
+
+    # 遍历
+    @staticmethod
+    def iter_files(src_path: str, is_recursion: bool = False, on_permission_error: str = "skip") -> PathList:
+        """获取路径下所有文件列表"""
+        path = PathUtils._ensure_src_path_exists(src_path)
+        iterator = path.rglob("*") if is_recursion else path.glob("*")
+        file_paths = PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
+        return PathList([file for file in file_paths if file.is_file()])
+
+    @staticmethod
+    def iter_dirs(src_path: str, is_recursion: bool = False, on_permission_error: str = "skip") -> PathList:
+        """获取路径下所有目录列表"""
+        path = PathUtils._ensure_src_path_exists(src_path)
+        iterator = path.rglob("*") if is_recursion else path.glob("*")
+        dir_paths = PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
+        return PathList([file for file in dir_paths if file.is_dir()])
+
+    # 路径匹配
+    @staticmethod
+    def glob_paths(src_path: str, pattern: str, on_permission_error: str = "skip") -> PathList:
+        """获取路径下匹配模式的路径列表"""
+        path = PathUtils._ensure_src_path_exists(src_path)
+        return PathUtils._collect_paths(path.glob(pattern), on_permission_error=on_permission_error)
+
+    @staticmethod
+    def rglob_paths(src_path: str, pattern: str, on_permission_error: str = "skip") -> PathList:
+        """获取路径下匹配模式的路径列表（递归）"""
+        path = PathUtils._ensure_src_path_exists(src_path)
+        return PathUtils._collect_paths(path.rglob(pattern), on_permission_error=on_permission_error)
+
+    @staticmethod
+    def filter_by_name(
+        src_path: str,
+        keyword: str,
+        is_recursion: bool = False,
+        include_dirs: bool = False,
+        on_permission_error: str = "skip",
+    ) -> PathList:
+        if include_dirs:
+            path = PathUtils._ensure_src_path_exists(src_path)
+            iterator = path.rglob("*") if is_recursion else path.glob("*")
+            paths = PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
+            return PathList([item for item in paths if keyword in item.name])
+        return PathList([
+            item
+            for item in PathUtils.iter_files(
+                src_path,
+                is_recursion=is_recursion,
+                on_permission_error=on_permission_error,
+            )
+            if keyword in item.name
+        ])
+
+    @staticmethod
+    def get_file_paths_with_suffix(
+        src_path: str,
+        suffix: str,
+        is_recursion: bool = False,
+        on_permission_error: str = "skip",
+    ) -> PathList:
+        return PathUtils.get_file_paths_with_suffixes(
+            src_path,
+            [suffix],
+            is_recursion,
+            on_permission_error=on_permission_error,
+        )
+
+    @staticmethod
+    def get_file_paths_with_suffixes(
+        src_path: str,
+        suffixes: list[str],
+        is_recursion: bool = False,
+        on_permission_error: str = "skip",
+    ) -> PathList:
+        normalized_suffixes = {suffix.lstrip(".").lower() for suffix in suffixes}
+        file_paths = PathUtils.iter_files(
+            src_path,
+            is_recursion=is_recursion,
+            on_permission_error=on_permission_error,
+        )
+        return PathList([
+            file_path
+            for file_path in file_paths
+            if file_path.suffix.lstrip(".").lower() in normalized_suffixes
+        ])
+
+    @staticmethod
+    def parse_file_with_suffix(
+        src_path: str,
+        is_recursion: bool = False,
+        include_empty: bool = False,
+        on_permission_error: str = "skip",
+    ) -> PathList:
+        """获取路径下所有文件后缀"""
+        path = PathUtils._ensure_src_path_exists(src_path)
+        iterator = path.rglob("*") if is_recursion else path.glob("*")
+        file_paths = PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
         suffix = {file.suffix.lstrip(".") for file in file_paths}
+        if not include_empty:
+            suffix.discard("")
         return PathList(list(suffix))
-
-    @staticmethod
-    def get_file_path_with_suffix(src_path: str, suffix: str, is_recursion: bool = False) -> PathList:
-        """ 获取路径下匹配后缀的文件列表 """
-        suffix = suffix.lstrip(".")
-        path = Path(src_path)
-        pattern = f"*.{suffix}"
-        iterator = path.rglob(pattern) if is_recursion else path.glob(pattern)
-        return PathList(list(iterator))
