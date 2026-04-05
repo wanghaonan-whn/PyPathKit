@@ -55,11 +55,11 @@ class PathUtils:
 
     @staticmethod
     def filter_by_name(
-        src_path: str,
-        keyword: str,
-        is_recursion: bool = False,
-        include_dirs: bool = False,
-        on_permission_error: str = "skip",
+            src_path: str,
+            keyword: str,
+            is_recursion: bool = False,
+            include_dirs: bool = False,
+            on_permission_error: str = "skip",
     ) -> PathList:
         if include_dirs:
             path = PathUtils._ensure_src_path_exists(src_path)
@@ -78,10 +78,10 @@ class PathUtils:
 
     @staticmethod
     def get_file_paths_with_suffix(
-        src_path: str,
-        suffix: str,
-        is_recursion: bool = False,
-        on_permission_error: str = "skip",
+            src_path: str,
+            suffix: str,
+            is_recursion: bool = False,
+            on_permission_error: str = "skip",
     ) -> PathList:
         return PathUtils.get_file_paths_with_suffixes(
             src_path,
@@ -92,10 +92,10 @@ class PathUtils:
 
     @staticmethod
     def get_file_paths_with_suffixes(
-        src_path: str,
-        suffixes: list[str],
-        is_recursion: bool = False,
-        on_permission_error: str = "skip",
+            src_path: str,
+            suffixes: list[str],
+            is_recursion: bool = False,
+            on_permission_error: str = "skip",
     ) -> PathList:
         normalized_suffixes = {suffix.lstrip(".").lower() for suffix in suffixes}
         file_paths = PathUtils.iter_files(
@@ -111,10 +111,10 @@ class PathUtils:
 
     @staticmethod
     def parse_file_with_suffix(
-        src_path: str,
-        is_recursion: bool = False,
-        include_empty: bool = False,
-        on_permission_error: str = "skip",
+            src_path: str,
+            is_recursion: bool = False,
+            include_empty: bool = False,
+            on_permission_error: str = "skip",
     ) -> PathList:
         """获取路径下所有文件后缀"""
         path = PathUtils._ensure_src_path_exists(src_path)

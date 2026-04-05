@@ -1,7 +1,7 @@
 import os
+from collections import Counter
 from pathlib import Path
 from typing import List, Union
-from collections import Counter
 
 
 class PathList(list):
@@ -12,7 +12,7 @@ class PathList(list):
 
     def to_str(self) -> list[str]:
         return [str(p) for p in self]
-    
+
     def counter_suffixes(self) -> dict[str, int]:
         counter = Counter()
         for file in self:
@@ -21,24 +21,27 @@ class PathList(list):
             if suffix:
                 counter[suffix] += 1
         return dict(counter)
-    
+
     def suffix_list(self) -> list[str]:
         return list(self.counter_suffixes().keys())
 
     def filter_file(self) -> "PathList":
         return PathList([item for item in self if (item if isinstance(item, Path) else Path(item)).is_file()])
-    
+
     def filter_dir(self) -> "PathList":
         return PathList([item for item in self if (item if isinstance(item, Path) else Path(item)).is_dir()])
-    
+
     def filter_exists(self) -> "PathList":
         return PathList([item for item in self if (item if isinstance(item, Path) else Path(item)).exists()])
 
     def sort_by_name(self, reverse: bool = False) -> "PathList":
-        return PathList(sorted(self, key=lambda item: (item if isinstance(item, Path) else Path(item)).name, reverse=reverse))
+        return PathList(
+            sorted(self, key=lambda item: (item if isinstance(item, Path) else Path(item)).name, reverse=reverse))
 
     def sort_by_mtime(self, reverse: bool = False) -> "PathList":
-        return PathList(sorted(self, key=lambda item: (item if isinstance(item, PathEntry) else PathEntry(item)).stat().st_mtime, reverse=reverse))
+        return PathList(
+            sorted(self, key=lambda item: (item if isinstance(item, PathEntry) else PathEntry(item)).stat().st_mtime,
+                   reverse=reverse))
     
     def unique(self) -> "PathList":
         normalized = []
@@ -49,7 +52,6 @@ class PathList(list):
                 seen.add(path)
                 normalized.append(path)
         return PathList(normalized)
-
 
 
 class PathEntry:
@@ -70,13 +72,13 @@ class PathEntry:
         if not args:
             raise ValueError("join() requires at least one path segment")
         return cls(Path(*args))
-    
+
     def joinpath(self, *args: Union[str, Path]) -> "PathEntry":
         """路径拼接"""
         if not args:
             raise ValueError("joinpath() requires at least one path segment")
         return PathEntry(self.path.joinpath(*args))
-    
+
     def child(self, *others: Union[str, Path, "PathEntry"]) -> "PathEntry":
         return self.joinpath(*others)
 
@@ -205,8 +207,6 @@ class PathEntry:
     def anchor(self) -> str:
         """路径锚点"""
         return self.path.anchor
-    
-    
 
 
 pathentry = PathEntry(r"D:\Projects\PyPathKit\pathkit")
