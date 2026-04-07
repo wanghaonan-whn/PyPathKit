@@ -102,8 +102,7 @@ class PathEntry:
         return self.relative_to(other)
 
     @property
-    def basename(self) -> str:
-        """文件名"""
+    def name(self) -> str:
         return self.path.name
 
     @property
@@ -207,7 +206,3 @@ class PathEntry:
     def anchor(self) -> str:
         """路径锚点"""
         return self.path.anchor
-
-
-pathentry = PathEntry(r"D:\Projects\PyPathKit\pathkit")
-print(pathentry)

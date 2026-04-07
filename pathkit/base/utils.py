@@ -54,7 +54,7 @@ class PathUtils:
         return PathUtils._collect_paths(path.rglob(pattern), on_permission_error=on_permission_error)
 
     @staticmethod
-    def filter_by_name(
+    def filter_name(
             src_path: str,
             keyword: str,
             is_recursion: bool = False,
