@@ -11,55 +11,104 @@ pathkit is a lightweight path toolkit built on top of `pathlib`.
 
 ## PathEntry
 
-```python
-from pathkit import PathEntry
+`PathEntry` methods and properties:
 
-root = PathEntry("data")
-file_path = root.child("images", "cat.jpg")
-
-print(file_path.exists())
-print(file_path.name)
-print(file_path.as_posix())
-print(file_path.relative_to("data"))
-```
+- `join()`
+- `joinpath()`
+- `child()`
+- `normalize()`
+- `absolute()`
+- `relative_to()`
+- `relative_other()`
+- `name`
+- `dirname`
+- `stem`
+- `suffix`
+- `suffixes`
+- `parts`
+- `parents`
+- `with_suffix()`
+- `with_name()`
+- `is_absolute()`
+- `common_path()`
+- `matches()`
+- `exists()`
+- `is_file()`
+- `is_dir()`
+- `is_symlink()`
+- `stat()`
+- `as_posix()`
+- `as_windows()`
+- `as_uri()`
+- `expanduser()`
+- `samefile()`
+- `drive`
+- `anchor`
 
 ## PathList
 
-```python
-from pathlib import Path
+`PathList` methods:
 
-from pathkit import PathList
-
-paths = PathList([Path("a.txt"), Path("b.txt"), Path("folder")])
-
-print(paths.filter_file())
-print(paths.filter_exists())
-print(paths.sort_by_name())
-```
+- `parent()`
+- `to_str()`
+- `counter_suffixes()`
+- `suffix_list()`
+- `filter_file()`
+- `filter_dir()`
+- `filter_exists()`
+- `sort_by_name()`
+- `sort_by_mtime()`
+- `unique()`
 
 ## PathUtils
 
-```python
-from pathkit import PathUtils
+`PathUtils` methods:
 
-print(PathUtils.iter_files("data"))
-print(PathUtils.glob_paths("data", "*.txt"))
-print(PathUtils.filter_name("data", "cat"))
-print(PathUtils.get_file_paths_with_suffixes("data", ["jpg", "png", "xml", "json"]))
-print(PathUtils.parse_file_with_suffix("data", include_empty=True))
-```
+- `iter_files()`
+- `iter_dirs()`
+- `glob_paths()`
+- `rglob_paths()`
+- `filter_name()`
+- `get_file_paths_with_suffix()`
+- `get_file_paths_with_suffixes()`
+- `parse_file_with_suffix()`
 
 ## Process
 
-```python
-from pathkit.process import XMLReader, FileWriter, AnnotationPathUtils
+`XMLReader` methods and properties:
 
-xml_reader = XMLReader("example.xml")
-print(xml_reader.get_root())
+- `read()`
+- `get_root()`
+- `find()`
+- `findall()`
+- `get_text()`
+- `get_attr()`
+- `label_name`
 
-FileWriter.save_txt(["cat", "dog"], "labels.txt")
-print(AnnotationPathUtils.get_keyword_with_xml_label("annotations", "cat"))
+`FileWriter` methods:
+
+- `save_txt()`
+
+`AnnotationPathUtils` methods:
+
+- `get_file_path_with_channel()`
+- `get_keyword_with_xml_label()`
+
+## Build Wheel
+
+Install build tool:
+
+```bash
+python -m pip install build
 ```
+
+Build wheel package in project root:
+
+```bash
+python -m build --wheel
+```
+
+After build completes, the wheel file will be generated in `dist/`.
 
 ## Error Rules
 
