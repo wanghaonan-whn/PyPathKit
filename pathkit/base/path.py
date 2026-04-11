@@ -197,12 +197,29 @@ class PathEntry:
             raise FileNotFoundError(f"Path does not exist: {other_path}")
         return self.path.samefile(other_path)
 
+    def mkdir(self, mode: int = 0o777, parents: bool = False, exist_ok: bool = False) -> None:
+        self.path.mkdir(mode=mode, parents=parents, exist_ok=exist_ok)
+
+    def touch(self, mode: int = 0o666, exist_ok: bool = True) -> None:
+        self.path.touch(mode=mode, exist_ok=exist_ok)
+
+    def read_text(self, encoding: str = "utf-8") -> str:
+        return self.path.read_text(encoding=encoding)
+
+    def write_text(self, data: str, encoding: str = "utf-8") -> int:
+        return self.path.write_text(data, encoding=encoding)
+
+    def unlink(self) -> None:
+        self.path.unlink()
+
+    def rename(self, target: Union[str, Path, "PathEntry"]) -> "PathEntry":
+        target_path = target.path if isinstance(target, PathEntry) else Path(target)
+        return PathEntry(self.path.rename(target_path))
+
     @property
     def drive(self) -> str:
-        """Windows 驱动器"""
         return self.path.drive
 
     @property
     def anchor(self) -> str:
-        """路径锚点"""
         return self.path.anchor

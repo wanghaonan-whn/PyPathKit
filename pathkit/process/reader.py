@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Union
 
-from base.abc import BaseReader
+from pathkit.process.base.abc import BaseReader
 
 
 class XMLReader(BaseReader):
@@ -37,8 +37,3 @@ class XMLReader(BaseReader):
     def label_name(self) -> list[Union[str, None]]:
         label_name = [obj.find("name").text for obj in self.__root.findall("object")]
         return label_name
-
-
-xml_path = "/mnt/8T/TE/datasets/实车/download-2026-04-10_20-32-04/teds/转向架/未区分项点/PS_20260312_TEDS_定位节点螺栓松脱_CR400AF_30处/CHANGSHASUOHKJ_20250422024354_4_CR400AF-1016_1/xml/1_3.xml"
-xmlreader = XMLReader(xml_path)
-print(xmlreader.findall("folder"))
