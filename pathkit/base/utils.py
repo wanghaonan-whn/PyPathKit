@@ -25,6 +25,13 @@ class PathUtils:
 
     # 遍历
     @staticmethod
+    def iter_paths(src_path: str, is_recursion: bool = False, on_permission_error: str = "skip") -> PathList:
+        """基础遍历法"""
+        path = PathUtils._ensure_src_path_exists(src_path)
+        iterator = path.rglob("*") if is_recursion else path.glob("*")
+        return PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
+
+    @staticmethod
     def iter_files(src_path: str, is_recursion: bool = False, on_permission_error: str = "skip") -> PathList:
         """
         获取路径下所有文件列表
@@ -32,17 +39,21 @@ class PathUtils:
         is_recursion: 是否递归获取子目录下的文件
         on_permission_error: 权限错误处理方式，"skip"表示跳过
         """
-        path = PathUtils._ensure_src_path_exists(src_path)
-        iterator = path.rglob("*") if is_recursion else path.glob("*")
-        file_paths = PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
+        file_paths = PathUtils.iter_paths(
+            src_path,
+            is_recursion=is_recursion,
+            on_permission_error=on_permission_error,
+        )
         return PathList([file for file in file_paths if file.is_file()])
 
     @staticmethod
     def iter_dirs(src_path: str, is_recursion: bool = False, on_permission_error: str = "skip") -> PathList:
         """获取路径下所有目录列表"""
-        path = PathUtils._ensure_src_path_exists(src_path)
-        iterator = path.rglob("*") if is_recursion else path.glob("*")
-        dir_paths = PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
+        dir_paths = PathUtils.iter_paths(
+            src_path,
+            is_recursion=is_recursion,
+            on_permission_error=on_permission_error,
+        )
         return PathList([file for file in dir_paths if file.is_dir()])
 
     # 路径匹配
@@ -67,9 +78,11 @@ class PathUtils:
             on_permission_error: str = "skip",
     ) -> PathList:
         if include_dirs:
-            path = PathUtils._ensure_src_path_exists(src_path)
-            iterator = path.rglob("*") if is_recursion else path.glob("*")
-            paths = PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
+            paths = PathUtils.iter_paths(
+                src_path,
+                is_recursion=is_recursion,
+                on_permission_error=on_permission_error,
+            )
             return PathList([item for item in paths if keyword in item.name])
         return PathList([
             item
@@ -120,12 +133,14 @@ class PathUtils:
             is_recursion: bool = False,
             include_empty: bool = False,
             on_permission_error: str = "skip",
-    ) -> PathList:
+    ) -> list[str]:
         """获取路径下所有文件后缀"""
-        path = PathUtils._ensure_src_path_exists(src_path)
-        iterator = path.rglob("*") if is_recursion else path.glob("*")
-        file_paths = PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
+        file_paths = PathUtils.iter_files(
+            src_path,
+            is_recursion=is_recursion,
+            on_permission_error=on_permission_error,
+        )
         suffix = {file.suffix.lstrip(".") for file in file_paths}
         if not include_empty:
             suffix.discard("")
-        return PathList(list(suffix))
+        return sorted(suffix)

@@ -209,6 +209,12 @@ class PathEntry:
     def write_text(self, data: str, encoding: str = "utf-8") -> int:
         return self.path.write_text(data, encoding=encoding)
 
+    def read_bytes(self) -> bytes:
+        return self.path.read_bytes()
+
+    def write_bytes(self, data: bytes) -> int:
+        return self.path.write_bytes(data)
+
     def unlink(self) -> None:
         self.path.unlink()
 
