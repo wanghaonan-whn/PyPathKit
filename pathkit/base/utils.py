@@ -26,7 +26,12 @@ class PathUtils:
     # 遍历
     @staticmethod
     def iter_files(src_path: str, is_recursion: bool = False, on_permission_error: str = "skip") -> PathList:
-        """获取路径下所有文件列表"""
+        """
+        获取路径下所有文件列表
+        src_path: 目标路径
+        is_recursion: 是否递归获取子目录下的文件
+        on_permission_error: 权限错误处理方式，"skip"表示跳过
+        """
         path = PathUtils._ensure_src_path_exists(src_path)
         iterator = path.rglob("*") if is_recursion else path.glob("*")
         file_paths = PathUtils._collect_paths(iterator, on_permission_error=on_permission_error)
