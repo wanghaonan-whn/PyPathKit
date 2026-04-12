@@ -57,14 +57,17 @@ class PathList(list):
 class PathEntry:
     """路径语义处理"""
 
-    def __init__(self, path: Union[str, Path]):
-        self.path = Path(path)
+    def __init__(self, path: Union[str, Path, "PathEntry"]):
+        self.path = path.path if isinstance(path, PathEntry) else Path(path)
 
     def __str__(self):
         return str(self.path)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.path!s})"
+
+    def __fspath__(self) -> str:
+        return os.fspath(self.path)
 
     @classmethod
     def join(cls, *args: Union[str, Path]) -> "PathEntry":

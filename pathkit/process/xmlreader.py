@@ -1,11 +1,10 @@
 import xml.etree.ElementTree as ET
-from pathlib import Path
-
+from pathkit import PathEntry
 from pathkit.process.base.abc import BaseReader
 
 
 class XMLReader(BaseReader):
-    def __init__(self, path: str | Path) -> None:
+    def __init__(self, path: str | PathEntry) -> None:
         super().__init__(path)
         self._tree = ET.parse(self.path)
         self._root = self._tree.getroot()

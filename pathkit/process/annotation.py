@@ -1,6 +1,6 @@
 from pathkit.base.path import PathList
 from pathkit.base.utils import PathUtils
-from pathkit.process.reader import XMLReader
+from pathkit.process.xmlreader import XMLReader
 
 
 class AnnotationPathUtils:
