@@ -1,11 +1,10 @@
 from typing import TYPE_CHECKING
 
-__all__ = ["AnnotationPathUtils", "XMLReader", "FileWriter"]
+__all__ = ["AnnotationPathUtils", "XMLDocument"]
 
 if TYPE_CHECKING:
     from pathkit.process.annotation import AnnotationPathUtils
-    from pathkit.process.writer import FileWriter
-    from pathkit.process.xmlreader import XMLReader
+    from pathkit.process.xmldocument import XMLDocument
 
 
 def __getattr__(name: str):
@@ -13,12 +12,8 @@ def __getattr__(name: str):
         from pathkit.process.annotation import AnnotationPathUtils
 
         return AnnotationPathUtils
-    if name == "XMLReader":
-        from pathkit.process.xmlreader import XMLReader
+    if name == "XMLDocument":
+        from pathkit.process.xmldocument import XMLDocument
 
-        return XMLReader
-    if name == "FileWriter":
-        from pathkit.process.writer import FileWriter
-
-        return FileWriter
+        return XMLDocument
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

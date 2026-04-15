@@ -3,7 +3,7 @@ from pathkit import PathEntry
 from pathkit.process.base.abc import BaseReader
 
 
-class XMLReader(BaseReader):
+class XMLDocument(BaseReader):
     def __init__(self, path: str | PathEntry) -> None:
         super().__init__(path)
         self._tree = ET.parse(self.path)
@@ -30,6 +30,17 @@ class XMLReader(BaseReader):
         """获取节点属性"""
         node = self.find(xpath)
         return node.attrib.get(attr_name, default) if node is not None else default
+
+    def update_value(self, xpath: str, new_value: str) -> None:
+        """更新节点文本"""
+        node = self.find(xpath)
+        if node is not None:
+            node.text = new_value
+
+    def save(self, path: str | PathEntry | None = None) -> None:
+        """保存 XML 到指定路径，默认覆盖原文件"""
+        target = self.path if path is None else (path.path if isinstance(path, PathEntry) else path)
+        self._tree.write(target, encoding="utf-8", xml_declaration=True)
 
     @property
     def label_name(self) -> list[str | None]:

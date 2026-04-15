@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Iterable
 
-from pathkit.base.path import PathList
+from pathkit.base.path import PathList, PathEntry
 
 
 class PathUtils:
@@ -25,7 +25,7 @@ class PathUtils:
 
     # 遍历
     @staticmethod
-    def iter_paths(src_path: str, is_recursion: bool = False, on_permission_error: str = "skip") -> PathList:
+    def iter_paths(src_path: str | PathEntry, is_recursion: bool = False, on_permission_error: str = "skip") -> PathList:
         """基础遍历法"""
         path = PathUtils._ensure_src_path_exists(src_path)
         iterator = path.rglob("*") if is_recursion else path.glob("*")

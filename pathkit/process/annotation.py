@@ -1,6 +1,6 @@
 from pathkit.base.path import PathList
 from pathkit.base.utils import PathUtils
-from pathkit.process.xmlreader import XMLReader
+from pathkit.process.xmldocument import XMLDocument
 
 
 class AnnotationPathUtils:
@@ -20,6 +20,6 @@ class AnnotationPathUtils:
         file_paths = PathUtils.get_file_path_with_suffix(src_path, suffix="xml", is_recursion=is_recursion)
         target_path = []
         for xml_path in file_paths:
-            if key_word in XMLReader(xml_path).label_name:
+            if key_word in XMLDocument(xml_path).label_name:
                 target_path.append(xml_path)
         return PathList(target_path)

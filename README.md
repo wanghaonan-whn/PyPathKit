@@ -7,7 +7,7 @@ pathkit is a lightweight path toolkit built on top of `pathlib`.
 - `PathEntry`: single path object wrapper
 - `PathList`: path collection helper
 - `PathUtils`: path scanning and filtering tools
-- `process`: XML reader and file writer helpers
+- `process`: XML document and annotation helpers
 
 ## PathEntry
 
@@ -75,7 +75,7 @@ pathkit is a lightweight path toolkit built on top of `pathlib`.
 
 ## Process
 
-`XMLReader` methods and properties:
+`XMLDocument` methods and properties:
 
 - `read()`
 - `get_root()`
@@ -83,11 +83,9 @@ pathkit is a lightweight path toolkit built on top of `pathlib`.
 - `findall()`
 - `get_text()`
 - `get_attr()`
+- `update_value()`
+- `save()`
 - `label_name`
-
-`FileWriter` methods:
-
-- `save_txt()`
 
 `AnnotationPathUtils` methods:
 
