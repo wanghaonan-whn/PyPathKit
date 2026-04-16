@@ -78,18 +78,19 @@ pathkit is a lightweight path toolkit built on top of `pathlib`.
 `XMLDocument` methods and properties:
 
 - `read()`
-- `get_root()`
+- `root`
 - `find()`
 - `findall()`
 - `get_text()`
 - `get_attr()`
-- `update_value()`
+- `update_text()`
+- `update_attr()`
 - `save()`
-- `label_name`
 
 `AnnotationPathUtils` methods:
 
 - `get_file_path_with_channel()`
+- `get_xml_label_names()`
 - `get_keyword_with_xml_label()`
 
 ## Build Wheel
