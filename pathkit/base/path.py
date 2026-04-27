@@ -42,7 +42,7 @@ class PathList(list):
         return PathList(
             sorted(self, key=lambda item: (item if isinstance(item, PathEntry) else PathEntry(item)).stat().st_mtime,
                    reverse=reverse))
-    
+
     def unique(self) -> "PathList":
         normalized = []
         seen = set()
@@ -109,7 +109,7 @@ class PathEntry:
         return self.path.name
 
     @property
-    def dirname(self) -> "PathEntry":
+    def parent(self) -> "PathEntry":
         """父路径"""
         return PathEntry(self.path.parent)
 
@@ -183,9 +183,6 @@ class PathEntry:
     def as_posix(self) -> str:
         return self.path.as_posix()
 
-    def as_windows(self) -> str:
-        return self.path.as_windows()
-
     def as_uri(self) -> str:
         return self.path.as_uri()
 
@@ -204,6 +201,7 @@ class PathEntry:
         self.path.mkdir(mode=mode, parents=parents, exist_ok=exist_ok)
 
     def touch(self, mode: int = 0o666, exist_ok: bool = True) -> None:
+        """创建文件"""
         self.path.touch(mode=mode, exist_ok=exist_ok)
 
     def read_text(self, encoding: str = "utf-8") -> str:
@@ -219,9 +217,11 @@ class PathEntry:
         return self.path.write_bytes(data)
 
     def unlink(self) -> None:
+        """删除文件"""
         self.path.unlink()
 
     def rename(self, target: Union[str, Path, "PathEntry"]) -> "PathEntry":
+        """重命名文件或移动文件，等价于mv"""
         target_path = target.path if isinstance(target, PathEntry) else Path(target)
         return PathEntry(self.path.rename(target_path))
 

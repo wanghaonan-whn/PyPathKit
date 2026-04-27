@@ -21,7 +21,7 @@ pathkit is a lightweight path toolkit built on top of `pathlib`.
 - `relative_to()`
 - `relative_other()`
 - `name`
-- `dirname`
+- `parent`
 - `stem`
 - `suffix`
 - `suffixes`

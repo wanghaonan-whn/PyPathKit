@@ -78,6 +78,11 @@ class PathUtils:
             include_dirs: bool = False,
             on_permission_error: str = "skip",
     ) -> PathList:
+        """
+            通过关键词过滤获取所有文件路径下所有符合的文件
+            src_path: 父路径
+            include_dirs: 是否包含文件夹
+        """
         if include_dirs:
             paths = PathUtils.iter_paths(
                 src_path,
