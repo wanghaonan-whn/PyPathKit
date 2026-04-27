@@ -1,17 +1,17 @@
 from typing import TYPE_CHECKING
 
-__all__ = ["AnnotationPathUtils", "XMLDocument"]
+__all__ = ["AnnotationUtils", "XMLDocument"]
 
 if TYPE_CHECKING:
-    from pathkit.process.annotation import AnnotationPathUtils
+    from pathkit.process.annotation import AnnotationUtils
     from pathkit.process.xmldocument import XMLDocument
 
 
 def __getattr__(name: str):
     if name == "AnnotationPathUtils":
-        from pathkit.process.annotation import AnnotationPathUtils
+        from pathkit.process.annotation import AnnotationUtils
 
-        return AnnotationPathUtils
+        return AnnotationUtils
     if name == "XMLDocument":
         from pathkit.process.xmldocument import XMLDocument
 
